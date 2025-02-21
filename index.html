@@ -3,11 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Sheets Search</title>
+    <title>Tax Identification Numbers Search</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 20px;
+            text-align: center;
+        }
+        #password-container, #search-container {
+            margin-top: 20px;
         }
         #search-bar {
             width: 300px;
@@ -38,20 +42,60 @@
             font-style: italic;
             color: gray;
         }
+        .disclaimer {
+            color: red;
+            margin-top: 40px;
+            font-size: 14px;
+        }
     </style>
 </head>
 <body>
-    <h1>Search Google Sheets</h1>
-    <input type="text" id="search-bar" placeholder="Search..." onkeyup="searchSheet()">
-    <div id="search-results"></div>
+
+    <!-- Password Input -->
+    <div id="password-container">
+        <h2>Enter Password to Access Search</h2>
+        <input type="password" id="password-input" placeholder="Enter password">
+        <button onclick="checkPassword()">Submit</button>
+        <p id="password-message" class="message"></p>
+    </div>
+
+    <!-- Search Input (Hidden Initially) -->
+    <div id="search-container" style="display: none;">
+        <h1>Tax Identification Numbers Search</h1>
+        <input type="text" id="search-bar" placeholder="Search..." onkeyup="searchSheet()">
+        <div id="search-results"></div>
+    </div>
+
+    <!-- Confidentiality Disclaimer -->
+    <p class="disclaimer">
+        <strong>Confidentiality Notice:</strong><br>
+        The information provided on this page is strictly confidential and intended solely for authorized employees of CST Group.
+        Unauthorized access, distribution, or disclosure of this information is strictly prohibited. Any misuse may result in 
+        disciplinary action or legal consequences. If you have accessed this page in error, please notify the administrator 
+        immediately and refrain from using or sharing any of its contents.
+    </p>
 
     <script>
-        const sheetID = "1EETAYAjMdAeE2UN_4u5cy1124EsOAaeIp6jJtoEPMjs"; // Replace with your Google Sheet ID
+        const sheetID = "1EETAYAjMdAeE2UN_4u5cy1124EsOAaeIp6jJtoEPMjs"; // Your Google Sheet ID
         const range = "Sheet1"; // Specify the range or sheet name
-        const apiKey = "AIzaSyClehWAl4S1snfAQJurhukNr_PdnLfzjkk"; // Replace with your API Key
+        const apiKey = "AIzaSyClehWAl4S1snfAQJurhukNr_PdnLfzjkk"; // Your API Key
 
         const url = `https://sheets.googleapis.com/v4/spreadsheets/${sheetID}/values/${range}?key=${apiKey}`;
         let sheetData = [];
+
+        // Password Protection
+        function checkPassword() {
+            const enteredPassword = document.getElementById("password-input").value;
+            const correctPassword = "CST2024"; // Set your own password here
+
+            if (enteredPassword === correctPassword) {
+                document.getElementById("password-container").style.display = "none";
+                document.getElementById("search-container").style.display = "block";
+                fetchData(); // Load Google Sheets data after authentication
+            } else {
+                document.getElementById("password-message").textContent = "Incorrect password. Try again.";
+            }
+        }
 
         // Fetch data from Google Sheets
         async function fetchData() {
@@ -118,9 +162,7 @@
                 resultsContainer.appendChild(table); // Append table to container
             }
         }
-
-        // Load the data when the page loads
-        fetchData();
     </script>
+
 </body>
 </html>
